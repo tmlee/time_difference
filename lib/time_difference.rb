@@ -1,5 +1,5 @@
-require "time_difference/version"
+require "active_support/all"
 
-module TimeDifference
-  # Your code goes here...
+class TimeDifference
+
 end
