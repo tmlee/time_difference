@@ -23,4 +23,13 @@ class TimeDifference
 
   end
 
+  def self.in_general
+  	result = {}
+	[:years, :months, :weeks, :days, :hours, :minutes, :seconds].each do |time_component|
+  		result[time_component] = (@time_diff/1.send(time_component)).floor
+  		@time_diff = (@time_diff - result[time_component].send(time_component))
+  	end
+  	result
+  end
+
 end
