@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/time_difference', __FILE__)
-
 Gem::Specification.new do |gem|
   gem.authors       = ["TM Lee"]
   gem.email         = ["tm89lee@gmail.com"]
@@ -15,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = "0.5.0"
 
-  gem.add_dependency('activesupport')
+  gem.add_runtime_dependency('activesupport')
   gem.add_development_dependency('rspec', '~> 2.13.0')
 
 end

@@ -1,3 +1,4 @@
+require 'rubygems'
 require "active_support/all"
 
 class TimeDifference
