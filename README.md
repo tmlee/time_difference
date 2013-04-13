@@ -16,17 +16,17 @@ And then execute:
 
 ### Get the time difference in year
 
-start_time = Time.new(2013,1)
-end_time = Time.new(2014,1)
-TimeDifference.between(start_time, end_time).in_years
-=> 1.0
+	start_time = Time.new(2013,1)
+	end_time = Time.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_years
+	=> 1.0
 
 ### Get the time difference in year
 
-start_time = Time.new(2013,1)
-end_time = Time.new(2014,1)
-TimeDifference.between(start_time, end_time).in_months
-=> 12.0
+	start_time = Time.new(2013,1)
+	end_time = Time.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_months
+	=> 12.0
 
 ### Supported time difference includes
 
