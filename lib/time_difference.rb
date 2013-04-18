@@ -14,9 +14,9 @@ class TimeDifference
   		self.class.instance_eval do
   			define_method("in_#{time_component}") do
   				if time_component == :months
-  					(@time_diff/(1.days * 30.42)).round(2)		
+  					((@time_diff/(1.days * 30.42)).round(2)).abs
   				else
-  			 		(@time_diff/1.send(time_component)).round(2)
+  			 		((@time_diff/1.send(time_component)).round(2)).abs
   			 	end
   			end
   		end
