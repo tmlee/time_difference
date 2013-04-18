@@ -8,7 +8,7 @@ TimeDifference is the missing Ruby method to calculate difference between two gi
 
 Add this line to your application's Gemfile:
 
-    gem 'time_difference', git: 'git@github.com:tmlee/time_difference.git'
+    gem 'time_difference'
 
 And then execute:
 
