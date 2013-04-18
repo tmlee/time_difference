@@ -1,6 +1,6 @@
-## v0.0.2
+## v0.2.0
 * Time difference will return absolute value
 
-## v0.0.1
+## v0.1.0
 
-* First release at v0.0.1, here we go!
+* First release at v0.1.0, here we go!
