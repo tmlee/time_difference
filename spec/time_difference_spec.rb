@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe TimeDifference do
 
+	it "returns time difference in each component" do
+		start_time = Time.new(2011,1)
+		end_time = Time.new(2011,12)
+		expect(TimeDifference.between(start_time, end_time).in_each_component).to eql({:years=>0.91, :months=>10.98, :weeks=>47.71, :days=>334.0, :hours=>8016.0, :minutes=>480960.0, :seconds=>28857600.0})
+	end
+
 	it "returns time difference in general that matches the total seconds" do
 		start_time = Time.new(2009,9)
 		end_time = Time.new(2010,11)

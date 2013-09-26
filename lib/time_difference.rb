@@ -24,9 +24,21 @@ class TimeDifference
 
   end
 
+  def self.in_each_component
+    time_in_each_component = {}
+    [:years, :months, :weeks, :days, :hours, :minutes, :seconds].each do |time_component|
+      if time_component == :months
+        time_in_each_component[time_component] = ((@time_diff/(1.days * 30.42)).round(2)).abs
+      else
+        time_in_each_component[time_component] = ((@time_diff/1.send(time_component)).round(2)).abs
+      end
+    end
+    time_in_each_component
+  end
+
   def self.in_general
   	result = {}
-	[:years, :months, :weeks, :days, :hours, :minutes, :seconds].each do |time_component|
+	  [:years, :months, :weeks, :days, :hours, :minutes, :seconds].each do |time_component|
   		result[time_component] = (@time_diff/1.send(time_component)).floor
   		@time_diff = (@time_diff - result[time_component].send(time_component))
   	end
