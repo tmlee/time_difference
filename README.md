@@ -23,12 +23,26 @@ And then execute:
 	TimeDifference.between(start_time, end_time).in_years
 	=> 1.0
 
-### Get the time difference in year
+### Get the time difference in months
 
 	start_time = Time.new(2013,1)
 	end_time = Time.new(2014,1)
 	TimeDifference.between(start_time, end_time).in_months
 	=> 12.0
+
+### Get the time difference for each component
+
+	start_time = Time.new(2013,1)
+	end_time = Time.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_each_component
+	=> {:years=>1.0, :months=>12.0, :weeks=>52.14, :days=>365.0, :hours=>8760.0, :minutes=>525600.0, :seconds=>31536000.0}
+
+### If you would like a breakdown in each component, use in_general (not that accurate)
+
+	start_time = Time.new(2013,1)
+	end_time = Time.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_general
+	=> {:years=>0, :months=>12, :weeks=>0, :days=>5, :hours=>0, :minutes=>0, :seconds=>0}
 
 ### Supported time difference includes
 
