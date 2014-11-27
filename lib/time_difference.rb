@@ -3,8 +3,8 @@ require "active_support/all"
 
 class TimeDifference
 
-  def self.between(start_time, end_time)
-  	@time_diff = end_time - start_time
+  def self.between(start_date, end_date)
+  	@start_date, @end_date = start_date, end_date
   	self
   end
 
@@ -37,12 +37,29 @@ class TimeDifference
   end
 
   def self.in_general
-  	result = {}
-	  [:years, :months, :weeks, :days, :hours, :minutes, :seconds].each do |time_component|
-  		result[time_component] = (@time_diff/1.send(time_component)).floor
-  		@time_diff = (@time_diff - result[time_component].send(time_component))
-  	end
-  	result
+    years = @end_date.year - @start_date.year
+    months = @end_date.month - @start_date.month
+    # Get # of days in previous month of end_date
+    previous_days_in_month = Time.days_in_month(@end_date.month - 1, @end_date.year)
+    # Then subtract difference between the day values
+    day_difference = @end_date.day - @start_date.day
+    # Lose one month and add day_difference offset
+    if day_difference < 0
+      months -= 1
+      # If months is less than 0, add 12 and subtract one from year
+      if months < 0
+        months += 12
+        year -=1
+      end
+      days = previous_days_in_month + day_difference
+    # Number of months stays the same but day difference is the number of days
+    else
+      days = day_difference
+    end
+    # If days is negative, subtract 1 from months
+    weeks = (days / 7).to_i
+    days %= 7
+  	{years: years, months: months, weeks: weeks, days: days}
   end
 
 end
