@@ -46,15 +46,15 @@ class TimeDifference
     # Lose one month and add day_difference offset
     if day_difference < 0
       months -= 1
-      # If months is less than 0, add 12 and subtract one from year
-      if months < 0
-        months += 12
-        year -=1
-      end
       days = previous_days_in_month + day_difference
     # Number of months stays the same but day difference is the number of days
     else
       days = day_difference
+    end
+    # If months is less than 0, add 12 and subtract one from year
+    if months < 0
+      months += 12
+      years -=1
     end
     # If days is negative, subtract 1 from months
     weeks = (days / 7).to_i
