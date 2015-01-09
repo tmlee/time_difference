@@ -10,8 +10,8 @@ describe TimeDifference do
 		end
 	
 		it "returns time difference in general that matches the total seconds" do
-			start_time = Time.new(2009,9)
-			end_time = Time.new(2010,11)
+			start_time = Time.new(2009,11)
+			end_time = Time.new(2011,1)
 			expect(TimeDifference.between(start_time, end_time).in_general).to eql({:years=>1, :months=>2, :weeks=>0, :days=>0, :hours=>18, :minutes=>0, :seconds=>0})
 		end
 	
@@ -48,8 +48,8 @@ describe TimeDifference do
 		end
 	
 		it "returns time difference in general that matches the total seconds" do
-			start_time = DateTime.new(2009,9)
-			end_time = DateTime.new(2010,11)
+			start_time = DateTime.new(2009,11)
+			end_time = DateTime.new(2011,1)
 			expect(TimeDifference.between(start_time, end_time).in_general).to eql({:years=>1, :months=>2, :weeks=>0, :days=>0, :hours=>18, :minutes=>0, :seconds=>0})
 		end
 	
@@ -85,8 +85,8 @@ describe TimeDifference do
 		end
 	
 		it "returns time difference in general that matches the total seconds" do
-			start_time = Date.new(2009,9)
-			end_time = Date.new(2010,11)
+			start_time = Date.new(2009,11)
+			end_time = Date.new(2011,1)
 			expect(TimeDifference.between(start_time, end_time).in_general).to eql({:years=>1, :months=>2, :weeks=>0, :days=>0, :hours=>18, :minutes=>0, :seconds=>0})
 		end
 	
