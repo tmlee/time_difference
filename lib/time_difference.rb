@@ -4,8 +4,16 @@ require "active_support/all"
 class TimeDifference
 
   def self.between(start_time, end_time)
-    @time_diff = end_time.to_time - start_time.to_time
+    start_time = time_in_seconds(start_time)
+    end_time = time_in_seconds(end_time)
+
+    @time_diff = end_time - start_time
+
     self
+  end
+
+  def self.time_in_seconds(time)
+    time.to_time.to_f
   end
 
   class << self

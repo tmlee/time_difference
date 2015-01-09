@@ -64,6 +64,17 @@ describe TimeDifference do
       expect(TimeDifference.between(start_time, end_time).in_minutes).to eql 480960.0
     end
 
+    it "returns time difference when given a DateTime with a timezone offset" do
+      start_time = DateTime.parse('2011-01-01 00:00:00+4')
+      end_time = DateTime.parse('2011-12-01 00:00:00+4')
+      expect(TimeDifference.between(start_time, end_time).in_years).to eql 0.91
+      expect(TimeDifference.between(start_time, end_time).in_months).to eql 10.98
+      expect(TimeDifference.between(start_time, end_time).in_weeks).to eql 47.71
+      expect(TimeDifference.between(start_time, end_time).in_days).to eql 334.0
+      expect(TimeDifference.between(start_time, end_time).in_hours).to eql 8016.0
+      expect(TimeDifference.between(start_time, end_time).in_minutes).to eql 480960.0
+    end
+
     it "returns time difference in absolute value regardless how it is minus-ed out" do
       start_time = DateTime.new(2011, 1)
       end_time = DateTime.new(2011, 12)
