@@ -57,6 +57,7 @@ class TimeDifference
   end
 
   private
+  
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)

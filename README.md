@@ -18,8 +18,19 @@ And then execute:
 
 ### Get the time difference in year
 
+	# Works for Time, DateTime, and Date
 	start_time = Time.new(2013,1)
 	end_time = Time.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_years
+	=> 1.0
+
+	start_time = DateTime.new(2013,1)
+	end_time = DateTime.new(2014,1)
+	TimeDifference.between(start_time, end_time).in_years
+	=> 1.0
+
+	start_time = Date.new(2013,1)
+	end_time = Date.new(2014,1)
 	TimeDifference.between(start_time, end_time).in_years
 	=> 1.0
 
