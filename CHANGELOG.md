@@ -1,3 +1,6 @@
+## v0.4.2
+* Support Time, DateTime, and Date class as input
+
 ## v0.3.1
 * Support in_each_component as a shortcut for all time components
 
