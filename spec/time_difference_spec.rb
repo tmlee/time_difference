@@ -27,7 +27,7 @@ describe TimeDifference do
         start_time = clazz.new(2011, 1)
         end_time = clazz.new(2011, 12)
 
-        expect(TimeDifference.between(start_time, end_time).in_each_component).to eql({:years => 0.91, :months => 10.98, :weeks => 47.71, :days => 334.0, :hours => 8016.0, :minutes => 480960.0, :seconds => 28857600.0})
+        expect(TimeDifference.between(start_time, end_time).in_each_component).to eql({years: 0.91, months: 10.98, weeks: 47.71, days: 334.0, hours: 8016.0, minutes: 480960.0, seconds: 28857600.0})
       end
     end
   end
@@ -38,7 +38,7 @@ describe TimeDifference do
         start_time = clazz.new(2009, 11)
         end_time = clazz.new(2011, 1)
 
-        expect(TimeDifference.between(start_time, end_time).in_general).to eql({:years => 1, :months => 2, :weeks => 0, :days => 0, :hours => 18, :minutes => 0, :seconds => 0})
+        expect(TimeDifference.between(start_time, end_time).in_general).to eql({years: 1, months: 2, weeks: 0, days: 0, hours: 18, minutes: 0, seconds: 0})
       end
     end
   end
