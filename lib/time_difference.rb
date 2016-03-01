@@ -56,6 +56,23 @@ class TimeDifference
     end]
   end
 
+  def humanize
+    diff_parts = []
+    self.in_general.each do |part,quantity|
+      next if quantity <= 0
+      part = part.to_s.humanize
+
+      if quantity <= 1
+        part = part.singularize
+      end
+
+      diff_parts << "#{quantity} #{part}"
+    end
+
+    last_part = diff_parts.pop
+    return [diff_parts.join(', '), last_part].join(' and ')
+  end
+
   private
   
   def initialize(start_time, end_time)
