@@ -93,7 +93,7 @@ TimeDifference.between(start_time, end_time).in_general
 => {:years=>0, :months=>12, :weeks=>0, :days=>5, :hours=>0, :minutes=>0, :seconds=>0}
 ```
 
-### You can also get `in_general` as a human readable string
+### You can also get `in_general` as a human readable string, using `humanize`
 
 ```ruby
 start_time = Time.new(2013,1)
