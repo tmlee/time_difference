@@ -70,7 +70,11 @@ class TimeDifference
     end
 
     last_part = diff_parts.pop
-    return [diff_parts.join(', '), last_part].join(' and ')
+    if diff_parts.empty?
+      return last_part
+    else
+      return [diff_parts.join(', '), last_part].join(' and ')
+    end
   end
 
   private
