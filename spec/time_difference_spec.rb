@@ -168,4 +168,56 @@ describe TimeDifference do
       end
     end
   end
+
+  describe "#in_max_unit" do
+    with_each_class do |clazz|
+      it "handles years" do
+        start_time = clazz.new(2011, 1)
+        end_time = clazz.new(2012, 1)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("1 year")
+        
+        start_time = clazz.new(2011, 1)
+        end_time = clazz.new(2014, 1)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("3 years")
+      end
+
+      it "handles months" do
+        start_time = clazz.new(2011, 1)
+        end_time = clazz.new(2011, 2)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("1 month")
+        
+        start_time = clazz.new(2011, 1)
+        end_time = clazz.new(2011, 4)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("3 months")
+      end
+      
+      it "handles weeks" do
+        start_time = clazz.new(2011, 1, 1)
+        end_time = clazz.new(2011, 1, 8)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("1 week")
+        
+        start_time = clazz.new(2011, 1, 1)
+        end_time = clazz.new(2011, 1, 22)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("3 weeks")
+      end
+      
+      it "handles days" do
+        start_time = clazz.new(2011, 1, 1)
+        end_time = clazz.new(2011, 1, 2)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("1 day")
+        
+        start_time = clazz.new(2011, 1, 1)
+        end_time = clazz.new(2011, 1, 4)
+
+        expect(TimeDifference.between(start_time, end_time).in_max_unit).to eql("3 days")
+      end
+    end
+  end
 end
