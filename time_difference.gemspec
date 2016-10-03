@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.version       = "0.4.2"
   gem.license = 'MIT'
 
-  gem.add_runtime_dependency('activesupport')
+  gem.add_runtime_dependency('activesupport', '~> 4.2' )
   gem.add_development_dependency('rspec', '~> 2.13.0')
   gem.add_development_dependency('rake')
 
