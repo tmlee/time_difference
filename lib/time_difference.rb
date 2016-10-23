@@ -11,32 +11,14 @@ class TimeDifference
     new(start_time, end_time)
   end
 
-  def in_years
-    in_component(:years)
-  end
+  # Defining methods dynamically as in_years, in_months, etc.
 
-  def in_months
-    (@time_diff / (1.day * 30.42)).round(2)
-  end
-
-  def in_weeks
-    in_component(:weeks)
-  end
-
-  def in_days
-    in_component(:days)
-  end
-
-  def in_hours
-    in_component(:hours)
-  end
-
-  def in_minutes
-    in_component(:minutes)
-  end
-
-  def in_seconds
-    @time_diff
+  TIME_COMPONENTS.each do |time_component|
+    define_method("in_#{time_component.to_s}") do
+      return @time_diff.round if time_component == :seconds
+      return (@time_diff / (1.day * 30.42)).round if time_component == :months
+      in_component(time_component)
+    end
   end
 
   def in_each_component
@@ -91,7 +73,7 @@ class TimeDifference
   end
 
   def in_component(component)
-    (@time_diff / 1.send(component)).round(2)
+    (@time_diff / 1.send(component)).round
   end
 
 end
