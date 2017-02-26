@@ -89,6 +89,29 @@ describe TimeDifference do
 
         expect(TimeDifference.between(start_time, end_time).in_months).to eql(10.98)
       end
+
+      context "in a leap year" do
+        it "adds an extra day to cover 29th February" do
+          start_time = clazz.new(2012, 1)
+          end_time = clazz.new(2012, 3)
+
+          expect(TimeDifference.between(start_time, end_time).in_months).to eql(2.01)
+        end
+
+        it "does not add an extra day if the difference is within the 29th February" do
+          start_time = clazz.new(2012, 2, 29, 1)
+          end_time = clazz.new(2012, 2, 29, 2)
+
+          expect(TimeDifference.between(start_time, end_time).in_months).to eql(0.0)
+        end
+
+        it "doesn't add a day when the date period does not cover 29th February" do
+          start_time = clazz.new(2012, 3, 27)
+          end_time = clazz.new(2012, 4, 27)
+
+          expect(TimeDifference.between(start_time, end_time).in_months).to eql(1.02)
+        end
+      end
     end
   end
 
