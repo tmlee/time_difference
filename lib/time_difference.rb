@@ -45,6 +45,19 @@ class TimeDifference
     end]
   end
 
+  def in_max_unit
+    in_each_component.each do |k,v|
+      if v >= 1
+        amount = v.round
+        unit = amount == 1 ? k.to_s.singularize : k
+
+        return "#{amount} #{unit}"
+      end
+    end
+
+    "0 seconds"
+  end
+
   def in_general
     remaining = @time_diff
 
