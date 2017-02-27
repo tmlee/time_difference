@@ -7,8 +7,8 @@ class TimeDifference
 
   TIME_COMPONENTS = [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
 
-  def self.between(start_time, end_time)
-    new(start_time, end_time)
+  def self.between(end_time, start_time, abs = true)
+    new(end_time, start_time, abs)
   end
 
   def in_years
@@ -79,11 +79,12 @@ class TimeDifference
 
   private
   
-  def initialize(start_time, end_time)
-    start_time = time_in_seconds(start_time)
+  def initialize(end_time, start_time, abs)
     end_time = time_in_seconds(end_time)
+    start_time = time_in_seconds(start_time)
 
-    @time_diff = (end_time - start_time).abs
+    @time_diff = (end_time - start_time)
+    @time_diff = @time_diff.abs if abs
   end
 
   def time_in_seconds(time)
