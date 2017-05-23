@@ -101,6 +101,14 @@ end_time = Time.new(2014,1)
 
 TimeDifference.between(start_time, end_time).humanize
 => "12 Months and 5 Days"
+
+The :only and :except options can be used to limit the components included
+
+TimeDifference.between(start_time, end_time).humanize(only: [:months])
+=> "12 Months"
+
+TimeDifference.between(start_time, end_time).humanize(except: [:months])
+=> "5 Days"
 ```
 
 ## Contributing

@@ -40,7 +40,7 @@ describe TimeDifference do
         start_time = clazz.new(2009, 11)
         end_time = clazz.new(2011, 1)
 
-        expect(TimeDifference.between(start_time, end_time).in_general).to eql({years: 1, months: 2, weeks: 0, days: 0, hours: 18, minutes: 0, seconds: 0})
+        expect(TimeDifference.between(start_time, end_time).in_general).to eql({years: 1, months: 1, weeks: 4, days: 2, hours: 7, minutes: 41, seconds: 42})
       end
     end
   end
@@ -51,8 +51,30 @@ describe TimeDifference do
         start_time = clazz.new(2009, 11)
         end_time = clazz.new(2011, 1)
 
-        expect(TimeDifference.between(start_time, end_time).humanize).to eql("1 Year, 2 Months and 18 Hours")
+        expect(TimeDifference.between(start_time, end_time).humanize).to eql("1 Year, 1 Month, 4 Weeks, 2 Days, 7 Hours, 41 Minutes and 42 Seconds")
       end
+
+      it "returns a string representing the time difference for selected components using :only option" do
+        start_time = clazz.new(2009, 11)
+        end_time = clazz.new(2011, 1)
+
+        expect(TimeDifference.between(start_time, end_time).humanize(only: [:years, :months, :minutes])).to eql("1 Year, 1 Month and 41 Minutes")
+      end
+
+      it "returns a string representing the time difference for selected components using :except option" do
+        start_time = clazz.new(2009, 11)
+        end_time = clazz.new(2011, 1)
+
+        expect(TimeDifference.between(start_time, end_time).humanize(except: [:months, :weeks, :days])).to eql("1 Year, 7 Hours, 41 Minutes and 42 Seconds")
+      end
+
+      it "returns nil when same components are specified in :only and :except option" do
+        start_time = clazz.new(2009, 11)
+        end_time = clazz.new(2011, 1)
+
+        expect(TimeDifference.between(start_time, end_time).humanize(only: [:months, :weeks], except: [:months, :weeks])).to eql(nil)
+      end
+
     end
   end
 
