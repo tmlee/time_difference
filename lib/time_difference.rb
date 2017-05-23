@@ -56,9 +56,22 @@ class TimeDifference
     end]
   end
 
-  def humanize
+  def humanize(options={})
     diff_parts = []
-    in_general.each do |part,quantity|
+    general_hash    = in_general
+    attribute_names = general_hash.keys
+
+    if only = options[:only]
+      attribute_names &= Array(only).map(&:to_sym)
+    end
+
+    if except = options[:except]
+      attribute_names -= Array(except).map(&:to_sym)
+    end
+
+    result = general_hash.select {|part, quantity| part.in?(attribute_names) && quantity > 0 }
+
+    result.each do |part,quantity|
       next if quantity <= 0
       part = part.to_s.humanize
 
@@ -78,7 +91,7 @@ class TimeDifference
   end
 
   private
-  
+
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)
