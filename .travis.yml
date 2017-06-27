@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - "1.9.3"
+
   - 2.2
   - 2.3
   - 2.4
@@ -14,3 +14,12 @@ gemfile:
 
 before_install:
   - gem install bundler
+
+matrix:
+  exclude:
+    -
+      rvm: 2.4
+      gemfile: Gemfile.activesupport32
+    -
+      rvm: jruby-19mode
+      gemfile: Gemfile
