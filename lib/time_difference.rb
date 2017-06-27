@@ -3,6 +3,8 @@ require "active_support/all"
 
 class TimeDifference
 
+  SI_BASE_UNIT = ActiveSupport::VERSION::STRING > '5.1'
+
   private_class_method :new
 
   TIME_COMPONENTS = [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
@@ -16,7 +18,7 @@ class TimeDifference
   end
 
   def in_months
-    (@time_diff / (1.day * 30.42)).round(2)
+    (@time_diff / (SI_BASE_UNIT ? 1.months.to_i : 1.day * 30.42)).round(2)
   end
 
   def in_weeks
@@ -49,7 +51,7 @@ class TimeDifference
     remaining = @time_diff
 
     Hash[TIME_COMPONENTS.map do |time_component|
-      rounded_time_component = (remaining / 1.send(time_component)).floor
+      rounded_time_component = (remaining / 1.send(time_component).to_i).floor
       remaining -= rounded_time_component.send(time_component)
 
       [time_component, rounded_time_component]
@@ -78,7 +80,7 @@ class TimeDifference
   end
 
   private
-  
+
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)
@@ -91,7 +93,7 @@ class TimeDifference
   end
 
   def in_component(component)
-    (@time_diff / 1.send(component)).round(2)
+    (@time_diff / 1.send(component).to_i).round(2)
   end
 
 end
