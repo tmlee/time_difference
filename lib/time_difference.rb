@@ -6,6 +6,15 @@ class TimeDifference
   private_class_method :new
 
   TIME_COMPONENTS = [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
+  RUSSIAN_HUMANIZE_COMPONENTS = {
+    'Year'    => 'г.',
+    'Month'   => 'мес.',
+    'Week'    => 'нед.',
+    'Day'     => 'д.',
+    'Hour'    => 'ч.',
+    'Minute'  => 'мин.',
+    'Second'  => 'с.'
+  }
 
   def self.between(start_time, end_time)
     new(start_time, end_time)
@@ -63,7 +72,7 @@ class TimeDifference
       part = part.to_s.humanize
 
       if quantity <= 1
-        part = part.singularize
+        part = RUSSIAN_HUMANIZE_COMPONENTS[part.singularize]
       end
 
       diff_parts << "#{quantity} #{part}"
@@ -78,7 +87,7 @@ class TimeDifference
   end
 
   private
-  
+
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)
