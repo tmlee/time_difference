@@ -16,7 +16,7 @@ class TimeDifference
   end
 
   def in_months
-    (@time_diff / (1.day * 30.42)).round(2)
+    (@time_diff / (1.day.to_f * 30.42)).round(2)
   end
 
   def in_weeks
@@ -78,7 +78,7 @@ class TimeDifference
   end
 
   private
-  
+
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)
@@ -91,7 +91,7 @@ class TimeDifference
   end
 
   def in_component(component)
-    (@time_diff / 1.send(component)).round(2)
+    (@time_diff / 1.send(component).to_f).round(2)
   end
 
 end
