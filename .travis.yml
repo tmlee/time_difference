@@ -8,13 +8,7 @@ rvm:
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
 gemfile:
-  - Gemfile.activesupport32
-  - Gemfile.activesupport42
-
-matrix:
-  exclude:
-  - rvm: 2.4
-    gemfile: Gemfile.activesupport32
+  - Gemfile.activesupport51
 
 before_install:
   - gem install bundler
