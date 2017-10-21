@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/tmlee/time_difference.png)](https://travis-ci.org/tmlee/time_difference)
 
+This version works with Activesupport 3.1 to 4.2
+
 # TimeDifference
 
 TimeDifference is the missing Ruby method to calculate difference between two given time. You can do a Ruby time difference in year, month, week, day, hour, minute, and seconds.
@@ -9,7 +11,7 @@ TimeDifference is the missing Ruby method to calculate difference between two gi
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'time_difference'
+gem 'time_difference', '~> 0.6.0.pre.activesupport42'
 ```
 
 And then execute:
