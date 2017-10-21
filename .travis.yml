@@ -13,9 +13,8 @@ gemfile:
 
 matrix:
   exclude:
-    - rvm: 2.4
-      gemfile: Gemfile.activesupport32
-      env: ISOLATED=true
+  - rvm: 2.4
+    gemfile: Gemfile.activesupport32
 
 before_install:
   - gem install bundler
