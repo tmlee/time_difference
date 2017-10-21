@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/tmlee/time_difference.png)](https://travis-ci.org/tmlee/time_difference)
 
-This version works with Activesupport 3.1 to 4.2
+This latest version of the gem works with ActiveSupport 5.1. For prior version, check out [v0.6.x-activesupport42](https://github.com/tmlee/time_difference/tree/0.6.0-activesupport42)
 
 # TimeDifference
 
@@ -11,7 +11,7 @@ TimeDifference is the missing Ruby method to calculate difference between two gi
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'time_difference', '~> 0.6.0.pre.activesupport42'
+gem 'time_difference'
 ```
 
 And then execute:
