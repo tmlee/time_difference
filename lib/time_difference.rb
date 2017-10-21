@@ -47,12 +47,14 @@ class TimeDifference
 
   def in_general
     remaining = @time_diff
-
     Hash[TIME_COMPONENTS.map do |time_component|
-      rounded_time_component = (remaining / 1.send(time_component)).floor
-      remaining -= rounded_time_component.send(time_component)
-
-      [time_component, rounded_time_component]
+      if remaining > 0
+        rounded_time_component = (remaining / 1.send(time_component).seconds).round(2).floor
+        remaining -= rounded_time_component.send(time_component)
+        [time_component, rounded_time_component]
+      else
+        [time_component, 0]
+      end
     end]
   end
 
@@ -78,7 +80,7 @@ class TimeDifference
   end
 
   private
-  
+
   def initialize(start_time, end_time)
     start_time = time_in_seconds(start_time)
     end_time = time_in_seconds(end_time)
