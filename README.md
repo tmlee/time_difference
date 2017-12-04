@@ -59,6 +59,9 @@ TimeDifference.between(start_time, end_time).in_years
 TimeDifference.between(start_time, end_time).in_months
 => 12.0
 
+TimeDifference.between(start_time, end_time).in_calendar_months
+=> 12.0
+
 TimeDifference.between(start_time, end_time).in_weeks
 => 52.14 
 
