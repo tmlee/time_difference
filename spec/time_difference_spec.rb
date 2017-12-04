@@ -181,4 +181,58 @@ describe TimeDifference do
       end
     end
   end
+  
+  describe '#in_calendar_months' do
+    with_each_class do |clazz|
+      it 'considers Sep-4 to Dec-4 to be 3 months' do
+        start_time = clazz.new(2017, 9, 4)
+        end_time = clazz.new(2017, 12, 4)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(3)
+      end
+      it 'considers Aug-4 to Nov-4 to be 3 months' do
+        start_time = clazz.new(2017, 8, 4)
+        end_time = clazz.new(2017, 11, 4)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(3)
+      end
+      it 'considers Sep-4 to Dec-3 to be 2 months' do
+        start_time = clazz.new(2017, 9, 4)
+        end_time = clazz.new(2017, 12, 3)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(2)
+      end
+      it 'considers Sep-4 to Dec-31 to be 3 months' do
+        start_time = clazz.new(2017, 9, 4)
+        end_time = clazz.new(2017, 12, 31)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(3)
+      end
+      it 'considers 2016-Sep-4 to 2017-Sep-4 to be 12 months' do
+        start_time = clazz.new(2016, 9, 4)
+        end_time = clazz.new(2017, 9, 4)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(12)
+      end
+      it 'considers 2016-Sep-4 to 2017-Dec-31 to be 15 months' do
+        start_time = clazz.new(2016, 9, 4)
+        end_time = clazz.new(2017, 12, 31)
+      
+        expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(15)
+      end
+    end
+    it 'counts months on the day when time2 > time1' do
+      start_time = Time.new(2017, 9, 4, 12, 15)
+      end_time = Time.new(2017, 12, 4, 12, 22)
+      
+      expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(3)
+    end
+    it 'does not count months on the day when time2 < time1' do
+      start_time = Time.new(2017, 9, 4, 12, 15)
+      end_time = Time.new(2017, 12, 4, 12, 10)
+      
+      expect(TimeDifference.between(start_time, end_time).in_calendar_months).to eq(2)
+    end
+  end
+  
 end

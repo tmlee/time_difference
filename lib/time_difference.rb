@@ -18,6 +18,10 @@ class TimeDifference
   def in_months
     (@time_diff / (1.day * 30.42)).round(2)
   end
+  
+  def in_calendar_months
+    months_between(@start_time, @end_time)
+  end
 
   def in_weeks
     in_component(:weeks)
@@ -82,10 +86,13 @@ class TimeDifference
   private
 
   def initialize(start_time, end_time)
-    start_time = time_in_seconds(start_time)
-    end_time = time_in_seconds(end_time)
+    @start_time = start_time.to_time
+    @end_time = end_time.to_time
+    
+    start_time_s = time_in_seconds(start_time)
+    end_time_s = time_in_seconds(end_time)
 
-    @time_diff = (end_time - start_time).abs
+    @time_diff = (end_time_s - start_time_s).abs
   end
 
   def time_in_seconds(time)
@@ -94,6 +101,19 @@ class TimeDifference
 
   def in_component(component)
     (@time_diff / 1.send(component)).round(2)
+  end
+  
+  def months_between(t1, t2)
+    months_excl_days = (t2.year*12 + t2.month) - (t1.year*12 + t1.month)
+    if t2.day > t1.day
+      months_excl_days
+    elsif t2.day < t1.day
+      months_excl_days - 1
+    elsif t2.seconds_since_midnight >= t1.seconds_since_midnight
+      months_excl_days
+    else
+      months_excl_days - 1
+    end
   end
 
 end
