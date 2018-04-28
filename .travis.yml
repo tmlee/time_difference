@@ -1,13 +1,25 @@
 language: ruby
+sudo: false
+
+cache:
+  bundler: true
+
 rvm:
   - 2.2
   - 2.3
   - 2.4
   - jruby-19mode # JRuby in 1.9 mode
-# uncomment this line if your project needs to run something other than `rake`:
-script: bundle exec rspec spec
+
+script: bundle exec rake
+
 gemfile:
-  - Gemfile.activesupport51
+  - gemfiles/activesupport_5.1.gemfile
+  - gemfiles/activesupport_5.2.gemfile
+
+matrix:
+  fast_finish: true
+  allow_failures:
+    - rvm: jruby-19mode
 
 before_install:
-  - gem install bundler
+  - gem update --system
