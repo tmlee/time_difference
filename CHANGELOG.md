@@ -1,3 +1,13 @@
+# CHANGELOG
+
+## v0.8.0
+
+* Supports inclusive vs exclusive date ranges
+* Respects timezones
+* Correctly calculates differences over leap years (does not assume 365.25 days
+  in a year or 30.42 days in a month)
+* Correctly corrects for daylight savings
+
 ## v0.4.2
 * Support Time, DateTime, and Date class as input
 

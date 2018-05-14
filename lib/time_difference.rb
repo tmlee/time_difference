@@ -1,55 +1,128 @@
 require 'rubygems'
-require "active_support/all"
+require 'active_support/all'
 
+# [TimeDifference]
+#
+# TimeDifference is the missing Ruby method to calculate difference between two
+#   given time. You can do a Ruby time difference in year, month, week, day,
+#   hour, minute, and seconds.
+#
+# @since 2013-04-12
+# @author TM Lee <tm89lee@gmail.com>, Joel Courtney <jcourtney@cozero.com.au>
 class TimeDifference
-
+  # @group Class Constants
+  TIME_COMPONENTS = %i[years months weeks days hours minutes seconds].freeze
+  DEFAULT_OPTIONS = {
+    force_timezone: false,
+    inclusive: false,
+    timezone: 'UTC'
+  }.freeze
+  # Ensure .initialize is a private method
   private_class_method :new
 
-  TIME_COMPONENTS = [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
-
-  def self.between(start_time, end_time)
-    new(start_time, end_time)
+  # Initialize for a range
+  #
+  # Default options are:
+  #   inclusive: false
+  #   timezone: 'UTC'
+  #
+  # @param [Date, Time, DateTime] start_time
+  # @param [Date, Time, DateTime] end_time
+  # @param [Hash] options
+  # @option options [String] :inclusive whether the calculations for dates
+  #   consider a Date to be inclusive or exclusive.
+  # @option options [String] :timezone what timezone to use for calculations.
+  # @return [TimeDifference]
+  def self.between(start_time, end_time, options = {})
+    new(start_time, end_time, options)
   end
 
-  def in_years
-    in_component(:years)
+  # The difference in years
+  #
+  # @todo account for daylight savings
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_years(rounding = 2)
+    in_period(:years, rounding)
   end
 
-  def in_months
-    (@time_diff / (1.day * 30.42)).round(2)
+  # The difference in months
+  #
+  # @todo account for daylight savings
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_months(rounding = 2)
+    in_period(:months, rounding)
   end
 
-  def in_weeks
-    in_component(:weeks)
+  # The difference in consistent (groups of 7).
+  #
+  # @todo account for daylight savings
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_weeks(rounding = 2)
+    in_period(:weeks, rounding)
   end
 
-  def in_days
-    in_component(:days)
+  # The difference in days
+  #
+  # @todo account for daylight savings
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_days(rounding = 2)
+    in_period(:days, rounding)
   end
 
-  def in_hours
-    in_component(:hours)
+  # The difference in hours
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_hours(rounding = 2)
+    in_component(:hours, rounding)
   end
 
-  def in_minutes
-    in_component(:minutes)
+  # The difference in minutes
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_minutes(rounding = 2)
+    in_component(:minutes, rounding)
   end
 
-  def in_seconds
+  # The difference in seconds
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_seconds(_rounding = nil)
     @time_diff
   end
 
-  def in_each_component
+  # The difference in each component available.
+  #
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Hash]
+  def in_each_component(rounding = 2)
     Hash[TIME_COMPONENTS.map do |time_component|
-      [time_component, public_send("in_#{time_component}")]
+      [time_component, public_send("in_#{time_component}", rounding)]
     end]
   end
 
-  def in_general
+  # The general approach to provide inputs for human readable
+  #
+  # @todo work out how to work with timezones
+  #
+  # @return [Hash]
+  def in_general(rounding = 2)
     remaining = @time_diff
     Hash[TIME_COMPONENTS.map do |time_component|
       if remaining > 0
-        rounded_time_component = (remaining / 1.send(time_component).seconds).round(2).floor
+        rounded_time_component = (
+          remaining / 1.send(time_component).seconds
+        ).round(rounding).floor
         remaining -= rounded_time_component.send(time_component)
         [time_component, rounded_time_component]
       else
@@ -58,42 +131,108 @@ class TimeDifference
     end]
   end
 
-  def humanize
+  # Returns the difference in human readable form.
+  #
+  # @todo I18n support
+  # @todo work out how to work with timezones
+  #
+  # @return [String]
+  def humanize(rounding = 2)
     diff_parts = []
-    in_general.each do |part,quantity|
+    in_general(rounding).each do |part, quantity|
       next if quantity <= 0
       part = part.to_s.humanize
-
-      if quantity <= 1
-        part = part.singularize
-      end
-
+      part = part.singularize if quantity <= 1
       diff_parts << "#{quantity} #{part}"
     end
 
     last_part = diff_parts.pop
-    if diff_parts.empty?
-      return last_part
-    else
-      return [diff_parts.join(', '), last_part].join(' and ')
-    end
+    return last_part if diff_parts.empty?
+
+    [diff_parts.join(', '), last_part].join(' and ')
   end
 
   private
 
-  def initialize(start_time, end_time)
-    start_time = time_in_seconds(start_time)
-    end_time = time_in_seconds(end_time)
+  # rubocop:disable Metrics/AbcSize
+  # Creates a new instance of TimeDifference
+  #
+  # @param [Date, Time, DateTime] start_time
+  # @param [Date, Time, DateTime] end_time
+  # @param [Hash] options
+  # @option options [Boolean] :inclusive
+  # @option options [String] :timezone
+  # @option optinos [Boolean] :force_timezone
+  # @return [TimeDifference]
+  def initialize(start_time, end_time, options)
+    start_time, end_time = end_time, start_time if end_time < start_time
+    end_time += 1.day if @inclusive && end_time.is_a?(Date)
 
-    @time_diff = (end_time - start_time).abs
+    @force_timezone = options.fetch(
+      :force_timezone,
+      DEFAULT_OPTIONS[:force_timezone]
+    )
+    @inclusive = options.fetch(:inclusive, DEFAULT_OPTIONS[:inclusive])
+    @timezone = options.fetch(:timezone, DEFAULT_OPTIONS[:timezone])
+
+    @start = in_time_zone(start_time)
+    @finish = in_time_zone(end_time)
+
+    @time_diff = (@finish.to_f - @start.to_f)
+  end
+  # rubocop:enable Metrics/AbcSize
+
+  # Transforms to a timezone if needed
+  #
+  # @param [Date, Time, DateTime] time
+  # @return [Time]
+  def in_time_zone(time)
+    time = time.in_time_zone(@timezone) if !time.is_a?(Time) || @force_timezone
+    time
   end
 
+  # Returns the time in seconds
+  #
+  # @param [Time, Date, DateTime] time
+  # @return [Numeric]
   def time_in_seconds(time)
     time.to_time.to_f
   end
 
-  def in_component(component)
-    (@time_diff / 1.send(component)).round(2)
+  # Returns the time in a given component
+  #
+  # @param [Symbol] component
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_component(component, rounding)
+    if %i[years months weeks days].include?(component)
+      return in_period(component, rounding)
+    end
+
+    (@time_diff / 1.send(component)).round(rounding)
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # Returns the length of time of the difference in a given period_type
+  #
+  # @param [Symbol] period_type
+  # @param [Integer] rounding the rounding of the numbers
+  # @return [Numeric]
+  def in_period(period_type, rounding = 2)
+    # First step iterate through years
+    periods = 0.0
+    pointer = @start + 1.send(period_type)
+    remainder = @time_diff
+    last_number_in_s = pointer.to_f - (pointer - 1.send(period_type)).to_f
+
+    while pointer < @finish
+      periods += 1
+      remainder -= last_number_in_s
+      pointer += 1.send(period_type)
+      last_number_in_s = pointer.to_f - (pointer - 1.send(period_type)).to_f
+    end
+
+    periods + (remainder / last_number_in_s).round(rounding)
+  end
+  # rubocop:enable Metrics/AbcSize
 end

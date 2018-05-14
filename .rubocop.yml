@@ -1,0 +1,7 @@
+Metrics/BlockLength:
+  Exclude:
+    - spec/*
+Metrics/ClassLength:
+  Max: 125
+Metrics/MethodLength:
+  Max: 12
