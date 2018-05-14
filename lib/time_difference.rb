@@ -47,6 +47,23 @@ class TimeDifference
     in_period(:years, rounding)
   end
 
+  # The difference in calendar years
+  #
+  # @param [Integer] rounding
+  # @return [Numeric]
+  def in_calendar_years(rounding = 2)
+    year_diff = (@finish.year - @start.year) - 1
+
+    if year_diff < 0
+      year_diff = (@finish - @start) / seconds_in_year_for_time(@start)
+    else
+      year_diff += ((@start.beginning_of_year + 1.year) - @start) / seconds_in_year_for_time(@start)
+      year_diff += (@finish - @finish.beginning_of_year) / seconds_in_year_for_time(@finish)
+    end
+
+    year_diff.round(rounding)
+  end
+
   # The difference in months
   #
   # @todo account for daylight savings
@@ -55,6 +72,23 @@ class TimeDifference
   # @return [Numeric]
   def in_months(rounding = 2)
     in_period(:months, rounding)
+  end
+
+  # The difference in calendar months
+  #
+  # @param [Integer] rounding
+  # @return [Numeric]
+  def in_calendar_months(rounding = 2)
+    month_diff = (12 * @finish.year + @finish.month) - (12 * @start.year + @start.month) - 1
+
+    if month_diff < 0
+      month_diff = (@finish - @start) / seconds_in_month_for_time(@start)
+    else
+      month_diff += ((@start.beginning_of_month + 1.month) - @start) / seconds_in_month_for_time(@start)
+      month_diff += (@finish - @finish.beginning_of_month) / seconds_in_month_for_time(@finish)
+    end
+
+    month_diff.round(rounding)
   end
 
   # The difference in consistent (groups of 7).
@@ -166,7 +200,6 @@ class TimeDifference
   # @return [TimeDifference]
   def initialize(start_time, end_time, options)
     start_time, end_time = end_time, start_time if end_time < start_time
-    end_time += 1.day if @inclusive && end_time.is_a?(Date)
 
     @force_timezone = options.fetch(
       :force_timezone,
@@ -174,6 +207,8 @@ class TimeDifference
     )
     @inclusive = options.fetch(:inclusive, DEFAULT_OPTIONS[:inclusive])
     @timezone = options.fetch(:timezone, DEFAULT_OPTIONS[:timezone])
+
+    end_time += 1.day if @inclusive && end_time.is_a?(Date)
 
     @start = in_time_zone(start_time)
     @finish = in_time_zone(end_time)
@@ -205,10 +240,6 @@ class TimeDifference
   # @param [Integer] rounding the rounding of the numbers
   # @return [Numeric]
   def in_component(component, rounding)
-    if %i[years months weeks days].include?(component)
-      return in_period(component, rounding)
-    end
-
     (@time_diff / 1.send(component)).round(rounding)
   end
 
@@ -235,4 +266,20 @@ class TimeDifference
     periods + (remainder / last_number_in_s).round(rounding)
   end
   # rubocop:enable Metrics/AbcSize
+
+  # Returns the number of seconds in a year for a given time
+  #
+  # @param [Time] seconds_in_year_for_time
+  # @return [Numeric]
+  def seconds_in_year_for_time(time)
+    ((time.beginning_of_year + 1.year) - time.beginning_of_year).to_f
+  end
+
+  # Returns the number of seconds in a year for a given time
+  #
+  # @param [Time] seconds_in_year_for_time
+  # @return [Numeric]
+  def seconds_in_month_for_time(time)
+    ((time.beginning_of_month + 1.month) - time.beginning_of_month).to_f
+  end
 end

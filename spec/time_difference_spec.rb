@@ -75,6 +75,14 @@ describe TimeDifference do
     end
   end
 
+  describe '#time_in_seconds' do
+    let(:time_diff) { TimeDifference.between(Time.parse('2017-01-01T00:00:00+00:00'), Time.parse('2017-01-02T00:00:00+00:00')) }
+
+    it 'is 86_400' do
+      expect(time_diff.send(:time_in_seconds, Time.parse('2017-01-01T00:00:00+00:00'))).to eq(1_483_228_800.0)
+    end
+  end
+
   describe '#in_each_component' do
     context 'General case' do
       with_each_class do |klass|
@@ -174,22 +182,329 @@ describe TimeDifference do
     end
   end
 
-  describe '#in_years' do
-    with_each_class do |klass|
-      it 'returns time difference in years based on Wolfram Alpha' do
-        start_time = klass.new(2011, 1)
-        end_time = klass.new(2011, 12)
+  describe '#in_calendar_years' do
+    context 'default within year' do
+      with_each_class do |klass|
+        it 'returns time difference in years' do
+          start_time = klass.new(2011, 7)
+          end_time = klass.new(2011, 8)
 
-        expect(TimeDifference.between(start_time, end_time).in_years)
-          .to eql(0.92)
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(0.08)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 8)
+          end_time = klass.new(2011, 7)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(0.08)
+        end
       end
+    end
 
-      it 'returns an absolute difference' do
-        start_time = klass.new(2011, 12)
-        end_time = klass.new(2011, 1)
+    context 'default across year' do
+      with_each_class do |klass|
+        it 'returns time difference in years' do
+          start_time = klass.new(2011, 7)
+          end_time = klass.new(2012, 3)
 
-        expect(TimeDifference.between(start_time, end_time).in_years)
-          .to eql(0.92)
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(0.67)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2012, 3)
+          end_time = klass.new(2011, 7)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(0.67)
+        end
+      end
+    end
+
+    context 'default long time' do
+      with_each_class do |klass|
+        it 'returns time difference in years' do
+          start_time = klass.new(2011, 2)
+          end_time = klass.new(2016, 3)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(5.08)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2016, 3)
+          end_time = klass.new(2011, 2)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_years)
+            .to eql(5.08)
+        end
+      end
+    end
+
+    context 'rounding: 10' do
+      with_each_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time).in_years(10))
+            .to eql(0.9150684932)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time).in_years(10))
+            .to eql(0.9150684932)
+        end
+      end
+    end
+
+    context 'inclusive: true' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years)
+            .to eql(0.92)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years)
+            .to eql(0.92)
+        end
+      end
+    end
+
+    context 'inclusive: true, rounding: 10' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+          time_diff = TimeDifference.between(start_time, end_time, inclusive: true)
+
+          expect(time_diff.in_years(10)).to eql(0.9178082192)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years(10))
+            .to eql(0.9178082192)
+        end
+      end
+    end
+  end
+
+  describe '#in_calendar_months' do
+    context 'default within month' do
+      with_each_class do |klass|
+        it 'returns time difference in years' do
+          start_time = klass.new(2011, 7, 3)
+          end_time = klass.new(2011, 7, 17)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(0.45)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 7, 17)
+          end_time = klass.new(2011, 7, 3)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(0.45)
+        end
+      end
+    end
+
+    context 'default across month' do
+      with_each_class do |klass|
+        it 'returns time difference in calendar months' do
+          start_time = klass.new(2011, 7, 17)
+          end_time = klass.new(2011, 8, 21)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(1.13)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 8, 21)
+          end_time = klass.new(2011, 7, 17)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(1.13)
+        end
+      end
+    end
+
+    context 'default long time' do
+      with_each_class do |klass|
+        it 'returns time difference in years' do
+          start_time = klass.new(2011, 2)
+          end_time = klass.new(2016, 3)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(61.0)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2016, 3)
+          end_time = klass.new(2011, 2)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months)
+            .to eql(61.0)
+        end
+      end
+    end
+
+    context 'rounding: 10' do
+      with_each_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months(10))
+            .to eql(11.0)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time).in_calendar_months(10))
+            .to eql(11.0)
+        end
+      end
+    end
+
+    context 'inclusive: true' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_calendar_months)
+            .to eql(11.03)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_calendar_months)
+            .to eql(11.03)
+        end
+      end
+    end
+
+    context 'inclusive: true, rounding: 10' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+          time_diff = TimeDifference.between(start_time, end_time, inclusive: true)
+
+          expect(time_diff.in_calendar_months(10)).to eql(11.0322580645)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+          time_diff = TimeDifference.between(start_time, end_time, inclusive: true)
+
+          expect(time_diff.in_calendar_months(10))
+            .to eql(11.0322580645)
+        end
+      end
+    end
+  end
+
+  describe '#in_years' do
+    context 'default' do
+      with_each_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time).in_years)
+            .to eql(0.92)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time).in_years)
+            .to eql(0.92)
+        end
+      end
+    end
+
+    context 'rounding: 10' do
+      with_each_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time).in_years(10))
+            .to eql(0.9150684932)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time).in_years(10))
+            .to eql(0.9150684932)
+        end
+      end
+    end
+
+    context 'inclusive: true' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years)
+            .to eql(0.92)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years)
+            .to eql(0.92)
+        end
+      end
+    end
+
+    context 'inclusive: true, rounding: 10' do
+      with_each_date_class do |klass|
+        it 'returns time difference in years based on Wolfram Alpha' do
+          start_time = klass.new(2011, 1)
+          end_time = klass.new(2011, 12)
+          time_diff = TimeDifference.between(start_time, end_time, inclusive: true)
+
+          expect(time_diff.in_years(10)).to eql(0.9178082192)
+        end
+
+        it 'returns an absolute difference' do
+          start_time = klass.new(2011, 12)
+          end_time = klass.new(2011, 1)
+
+          expect(TimeDifference.between(start_time, end_time, inclusive: true).in_years(10))
+            .to eql(0.9178082192)
+        end
       end
     end
   end
