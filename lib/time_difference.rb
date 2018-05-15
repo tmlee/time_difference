@@ -12,10 +12,13 @@ require 'active_support/all'
 class TimeDifference
   # @group Class Constants
   TIME_COMPONENTS = %i[years months weeks days hours minutes seconds].freeze
-  DEFAULT_OPTIONS = {
+  DEFAULT_DATE_OPTIONS = {
     force_timezone: false,
     inclusive: false,
-    timezone: 'UTC'
+    timezone: 'UTC',
+  }.freeze
+  DEFAULT_IN_OPTIONS = {
+    rounding: 2
   }.freeze
   # Ensure .initialize is a private method
   private_class_method :new
@@ -41,17 +44,19 @@ class TimeDifference
   #
   # @todo account for daylight savings
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_years(rounding = 2)
-    in_period(:years, rounding)
+  def in_years(options = {})
+    in_period(:years, options)
   end
 
   # The difference in calendar years
   #
-  # @param [Integer] rounding
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_calendar_years(rounding = 2)
+  def in_calendar_years(options = {})
     year_diff = (@finish.year - @start.year) - 1
 
     if year_diff < 0
@@ -61,24 +66,25 @@ class TimeDifference
       year_diff += (@finish - @finish.beginning_of_year) / seconds_in_year_for_time(@finish)
     end
 
-    year_diff.round(rounding)
+    year_diff.round(DEFAULT_IN_OPTIONS.merge(options)[:rounding])
   end
 
   # The difference in months
   #
   # @todo account for daylight savings
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_months(rounding = 2)
-    in_period(:months, rounding)
+  def in_months(options = {})
+    in_period(:months, options)
   end
 
   # The difference in calendar months
   #
   # @param [Integer] rounding
   # @return [Numeric]
-  def in_calendar_months(rounding = 2)
+  def in_calendar_months(options = {})
     month_diff = (12 * @finish.year + @finish.month) - (12 * @start.year + @start.month) - 1
 
     if month_diff < 0
@@ -88,48 +94,53 @@ class TimeDifference
       month_diff += (@finish - @finish.beginning_of_month) / seconds_in_month_for_time(@finish)
     end
 
-    month_diff.round(rounding)
+    month_diff.round(DEFAULT_IN_OPTIONS.merge(options)[:rounding])
   end
 
   # The difference in consistent (groups of 7).
   #
   # @todo account for daylight savings
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_weeks(rounding = 2)
-    in_period(:weeks, rounding)
+  def in_weeks(options = {})
+    in_period(:weeks, options)
   end
 
   # The difference in days
   #
   # @todo account for daylight savings
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_days(rounding = 2)
-    in_period(:days, rounding)
+  def in_days(options = {})
+    in_period(:days, options)
   end
 
   # The difference in hours
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_hours(rounding = 2)
-    in_component(:hours, rounding)
+  def in_hours(options = {})
+    in_component(:hours, options)
   end
 
   # The difference in minutes
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_minutes(rounding = 2)
-    in_component(:minutes, rounding)
+  def in_minutes(options = {})
+    in_component(:minutes, options)
   end
 
   # The difference in seconds
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
   def in_seconds(_rounding = nil)
     @time_diff
@@ -137,11 +148,18 @@ class TimeDifference
 
   # The difference in each component available.
   #
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Hash]
-  def in_each_component(rounding = 2)
+  def in_each_component(options = {})
     Hash[TIME_COMPONENTS.map do |time_component|
-      [time_component, public_send("in_#{time_component}", rounding)]
+      [
+        time_component,
+        public_send(
+          "in_#{time_component}",
+          options
+        )
+      ]
     end]
   end
 
@@ -150,13 +168,13 @@ class TimeDifference
   # @todo work out how to work with timezones
   #
   # @return [Hash]
-  def in_general(rounding = 2)
+  def in_general(options = {})
     remaining = @time_diff
     Hash[TIME_COMPONENTS.map do |time_component|
       if remaining > 0
         rounded_time_component = (
           remaining / 1.send(time_component).seconds
-        ).round(rounding).floor
+        ).round(DEFAULT_IN_OPTIONS.merge(options)[:rounding]).floor
         remaining -= rounded_time_component.send(time_component)
         [time_component, rounded_time_component]
       else
@@ -171,9 +189,9 @@ class TimeDifference
   # @todo work out how to work with timezones
   #
   # @return [String]
-  def humanize(rounding = 2)
+  def humanize(options = {})
     diff_parts = []
-    in_general(rounding).each do |part, quantity|
+    in_general(options).each do |part, quantity|
       next if quantity <= 0
       part = part.to_s.humanize
       part = part.singularize if quantity <= 1
@@ -203,10 +221,10 @@ class TimeDifference
 
     @force_timezone = options.fetch(
       :force_timezone,
-      DEFAULT_OPTIONS[:force_timezone]
+      DEFAULT_DATE_OPTIONS[:force_timezone]
     )
-    @inclusive = options.fetch(:inclusive, DEFAULT_OPTIONS[:inclusive])
-    @timezone = options.fetch(:timezone, DEFAULT_OPTIONS[:timezone])
+    @inclusive = options.fetch(:inclusive, DEFAULT_DATE_OPTIONS[:inclusive])
+    @timezone = options.fetch(:timezone, DEFAULT_DATE_OPTIONS[:timezone])
 
     end_time += 1.day if @inclusive && end_time.is_a?(Date)
 
@@ -237,19 +255,21 @@ class TimeDifference
   # Returns the time in a given component
   #
   # @param [Symbol] component
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_component(component, rounding)
-    (@time_diff / 1.send(component)).round(rounding)
+  def in_component(component, options = {})
+    (@time_diff / 1.send(component)).round(DEFAULT_IN_OPTIONS.merge(options)[:rounding])
   end
 
   # rubocop:disable Metrics/AbcSize
   # Returns the length of time of the difference in a given period_type
   #
   # @param [Symbol] period_type
-  # @param [Integer] rounding the rounding of the numbers
+  # @param [Hash] options
+  # @option options [Integer] :rounding the rounding of the numbers
   # @return [Numeric]
-  def in_period(period_type, rounding = 2)
+  def in_period(period_type, options = {})
     # First step iterate through years
     periods = 0.0
     pointer = @start + 1.send(period_type)
@@ -263,7 +283,7 @@ class TimeDifference
       last_number_in_s = pointer.to_f - (pointer - 1.send(period_type)).to_f
     end
 
-    periods + (remainder / last_number_in_s).round(rounding)
+    periods + (remainder / last_number_in_s).round(DEFAULT_IN_OPTIONS.merge(options)[:rounding])
   end
   # rubocop:enable Metrics/AbcSize
 
