@@ -1,3 +1,15 @@
+# CHANGELOG
+
+## v0.8.0
+
+* Supports inclusive vs exclusive date ranges
+* Respects timezones
+* Correctly calculates differences over leap years (does not assume 365.25 days
+  in a year or 30.42 days in a month)
+* Correctly corrects for daylight savings
+* Support for in_calendar_years and in_calendar_months for monthly and yearly
+  billing cycle calculation support
+
 ## v0.4.2
 * Support Time, DateTime, and Date class as input
 

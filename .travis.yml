@@ -1,8 +1,27 @@
 language: ruby
 rvm:
-  - 2.2
-  - 2.3
-  - 2.4
+  - 2.6.0-preview1
+  - 2.5.1
+  - 2.5.0
+  - 2.4.4
+  - 2.4.3
+  - 2.4.2
+  - 2.4.1
+  - 2.4.0
+  - 2.3.7
+  - 2.3.6
+  - 2.3.5
+  - 2.3.4
+  - 2.3.3
+  - 2.3.2
+  - 2.3.1
+  - 2.3.0
+  - 2.2.9
+  - 2.2.8
+  - 2.2.7
+  - 2.2.6
+  - 2.2.5
+  - ruby-head
   - jruby-19mode # JRuby in 1.9 mode
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
