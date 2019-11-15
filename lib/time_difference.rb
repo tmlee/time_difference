@@ -3,6 +3,7 @@ require "active_support/all"
 
 class TimeDifference
 
+  attr_reader :time_diff
   private_class_method :new
 
   TIME_COMPONENTS = [:years, :months, :weeks, :days, :hours, :minutes, :seconds]
@@ -77,6 +78,10 @@ class TimeDifference
     else
       return [diff_parts.join(', '), last_part].join(' and ')
     end
+  end
+  
+  def <=>(other)
+    @time_diff <=> other.time_diff   
   end
 
   private
