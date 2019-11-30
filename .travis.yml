@@ -22,6 +22,3 @@ script: bundle exec rspec spec
 gemfile:
   - Gemfile.activesupport51
   - Gemfile.activesupport60
-
-before_install:
-  - gem install bundler
