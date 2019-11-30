@@ -3,11 +3,25 @@ rvm:
   - 2.2
   - 2.3
   - 2.4
+  - 2.5
+  - 2.6
+  - jruby
   - jruby-19mode # JRuby in 1.9 mode
+matrix:
+  exclude:
+    - rvm: 2.2
+      gemfile: Gemfile.activesupport60
+    - rvm: 2.3
+      gemfile: Gemfile.activesupport60
+    - rvm: 2.4
+      gemfile: Gemfile.activesupport60
+    - rvm: jruby-19mode
+      gemfile: Gemfile.activesupport60
 # uncomment this line if your project needs to run something other than `rake`:
 script: bundle exec rspec spec
 gemfile:
   - Gemfile.activesupport51
+  - Gemfile.activesupport60
 
 before_install:
   - gem install bundler
