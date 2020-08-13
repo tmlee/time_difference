@@ -45,9 +45,9 @@ class TimeDifference
     end]
   end
 
-  def in_general
+  def in_general(precision: :seconds)
     remaining = @time_diff
-    Hash[TIME_COMPONENTS.map do |time_component|
+    Hash[TIME_COMPONENTS[0..TIME_COMPONENTS.index(precision)].map do |time_component|
       if remaining > 0
         rounded_time_component = (remaining / 1.send(time_component).seconds).round(2).floor
         remaining -= rounded_time_component.send(time_component)
@@ -58,9 +58,10 @@ class TimeDifference
     end]
   end
 
-  def humanize
+  def humanize(precision: :seconds)
     diff_parts = []
-    in_general.each do |part,quantity|
+
+    in_general(precision: precision).each do |part,quantity|
       next if quantity <= 0
       part = part.to_s.humanize
 
